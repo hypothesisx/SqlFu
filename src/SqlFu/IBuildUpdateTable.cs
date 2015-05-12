@@ -20,12 +20,15 @@ namespace SqlFu
         private readonly ExpressionSqlBuilder<T> _builder;
 
         public UpdateTableBuilder(DbConnection db)
+          : this(db, null) { }
+
+        public UpdateTableBuilder(DbConnection db, string schemaName)
         {
             db.MustNotBeNull();
             _db = db;
-            _builder = new ExpressionSqlBuilder<T>(db.GetProvider().BuilderHelper);
+            _builder = new ExpressionSqlBuilder<T>(db.GetProvider().BuilderHelper, schemaName);
             _builder.Append("update ").WriteTableName();
-            _builder.Append(" set");
+            _builder.Append(" set");            
         }
 
         public IBuildUpdateTable<T> Set(Expression<Func<T, object>> column, Expression<Func<T, object>> statement)

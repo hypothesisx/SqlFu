@@ -76,9 +76,10 @@ namespace SqlFu
         /// <param name="db"></param>
         /// <param name="condition"></param>
         /// <returns></returns>
-        public static async Task<T> GetAsync<T>(this DbConnection db,Expression<Func<T, bool>> condition,CancellationToken token) 
+        public static async Task<T> GetAsync<T>(this DbConnection db,Expression<Func<T, bool>> condition,CancellationToken token
+          , string schemaName = null) 
         {
-            var builder = new ExpressionSqlBuilder<T>(db.GetProvider().BuilderHelper);
+            var builder = new ExpressionSqlBuilder<T>(db.GetProvider().BuilderHelper, schemaName);
             builder
                 .WriteSelect()
                 .WriteSelectAllColumns()
@@ -106,9 +107,10 @@ namespace SqlFu
         /// <param name="db"></param>
         /// <param name="condition"></param>
         /// <returns></returns>
-        public static async Task<IEnumerable<T>> QueryAsync<T>(this DbConnection db, Expression<Func<T, bool>> condition,CancellationToken token) 
+        public static async Task<IEnumerable<T>> QueryAsync<T>(this DbConnection db, Expression<Func<T, bool>> condition,CancellationToken token
+          , string schemaName = null)        
         {
-            var builder = new ExpressionSqlBuilder<T>(db.GetProvider().BuilderHelper);
+            var builder = new ExpressionSqlBuilder<T>(db.GetProvider().BuilderHelper, schemaName);
             builder
                 .WriteSelect()
                 .WriteSelectAllColumns()
@@ -239,10 +241,10 @@ namespace SqlFu
         /// <param name="criteria">Selection criteria</param>
         /// <returns></returns>
         public static async Task<R> GetColumnValueAsync<T, R>(this DbConnection db, Expression<Func<T, R>> selector,
-                                             Expression<Func<T, bool>> criteria,CancellationToken token)
+                                             Expression<Func<T, bool>> criteria, CancellationToken token, string schemaName = null)
         {
             selector.MustNotBeNull();
-            var builder = new ExpressionSqlBuilder<T>(db.GetProvider().BuilderHelper);
+            var builder = new ExpressionSqlBuilder<T>(db.GetProvider().BuilderHelper, schemaName);
             builder
                 .WriteSelect()
                 .WriteSelectColumn(selector)

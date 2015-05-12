@@ -14,11 +14,13 @@ namespace SqlFu.Expressions
         private readonly ParametersManager _pm = new ParametersManager();
         private readonly ExpressionWriter _writer;
         private readonly TableInfo _ti;
+      private readonly string _schemaName;
 
-        public ExpressionSqlBuilder(IDbProviderExpressionHelper provider)
+        public ExpressionSqlBuilder(IDbProviderExpressionHelper provider, string schemaName)
         {
             _provider = provider;
-            _ti = TableInfo.ForType(typeof (T));
+            _schemaName = schemaName;
+          _ti = TableInfo.ForType(typeof (T));
             provider.MustNotBeNull();
             _writer = new ExpressionWriter(_sb, provider, _pm);
         }
@@ -31,7 +33,7 @@ namespace SqlFu.Expressions
 
         public ExpressionSqlBuilder<T> WriteFrom()
         {
-            _sb.AppendFormat(" from {0}", _provider.EscapeName(_ti.Name));
+            _sb.AppendFormat(" from {0}.{1}", (_schemaName??"dbo"), _provider.EscapeName(_ti.Name));
             return this;
         }
 

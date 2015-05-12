@@ -67,9 +67,9 @@ namespace SqlFu
         /// <param name="db"></param>
         /// <param name="condition"></param>
         /// <returns></returns>
-        public static T Get<T>(this DbConnection db, Expression<Func<T, bool>> condition)
+        public static T Get<T>(this DbConnection db, Expression<Func<T, bool>> condition, string schemaName = null)
         {
-            var builder = new ExpressionSqlBuilder<T>(db.GetProvider().BuilderHelper);
+          var builder = new ExpressionSqlBuilder<T>(db.GetProvider().BuilderHelper, schemaName);
             builder
                 .WriteSelect()
                 .WriteSelectAllColumns()
@@ -87,9 +87,9 @@ namespace SqlFu
         /// <param name="db"></param>
         /// <param name="condition"></param>
         /// <returns></returns>
-        public static IEnumerable<T> Query<T>(this DbConnection db, Expression<Func<T, bool>> condition)
+        public static IEnumerable<T> Query<T>(this DbConnection db, Expression<Func<T, bool>> condition, string schemaName = null)
         {
-            var builder = new ExpressionSqlBuilder<T>(db.GetProvider().BuilderHelper);
+            var builder = new ExpressionSqlBuilder<T>(db.GetProvider().BuilderHelper, schemaName);
             builder
                 .WriteSelect()
                 .WriteSelectAllColumns()
@@ -108,10 +108,10 @@ namespace SqlFu
         /// <param name="criteria">Selection criteria</param>
         /// <returns></returns>
         public static R GetColumnValue<T, R>(this DbConnection db, Expression<Func<T, R>> selector,
-                                             Expression<Func<T, bool>> criteria)
+                                             Expression<Func<T, bool>> criteria, string schemaName = null)
         {
             selector.MustNotBeNull();
-            var builder = new ExpressionSqlBuilder<T>(db.GetProvider().BuilderHelper);
+            var builder = new ExpressionSqlBuilder<T>(db.GetProvider().BuilderHelper, schemaName);
             builder
                 .WriteSelect()
                 .WriteSelectColumn(selector)
@@ -122,10 +122,10 @@ namespace SqlFu
         }
 
         public static IEnumerable<R> QueryColumn<T, R>(this DbConnection db, Expression<Func<T, R>> selector,
-                                                       Expression<Func<T, bool>> criteria)
+                                                       Expression<Func<T, bool>> criteria, string schemaName = null)
         {
             selector.MustNotBeNull();
-            var builder = new ExpressionSqlBuilder<T>(db.GetProvider().BuilderHelper);
+            var builder = new ExpressionSqlBuilder<T>(db.GetProvider().BuilderHelper, schemaName);
             builder
                 .WriteSelect()
                 .WriteSelectColumn(selector)
@@ -135,9 +135,9 @@ namespace SqlFu
             return db.Query<R>(builder.ToString(), builder.Parameters.ToArray());
         }
 
-        public static long Count<T>(this DbConnection db, Expression<Func<T, bool>> criteria = null)
+        public static long Count<T>(this DbConnection db, Expression<Func<T, bool>> criteria = null, string schemaName = null)
         {
-            var builder = new ExpressionSqlBuilder<T>(db.GetProvider().BuilderHelper);
+            var builder = new ExpressionSqlBuilder<T>(db.GetProvider().BuilderHelper, schemaName);
             builder.Append("select count(*) from ").WriteTableName();
             if (criteria != null)
             {
@@ -153,9 +153,9 @@ namespace SqlFu
         /// <param name="db"></param>
         /// <param name="criteria"></param>
         /// <returns></returns>
-        public static bool HasAnyRows<T>(this DbConnection db, Expression<Func<T, bool>> criteria = null)
+        public static bool HasAnyRows<T>(this DbConnection db, Expression<Func<T, bool>> criteria = null, string schemaName = null)
         {
-            var builder = new ExpressionSqlBuilder<T>(db.GetProvider().BuilderHelper);
+            var builder = new ExpressionSqlBuilder<T>(db.GetProvider().BuilderHelper, schemaName);
             builder
                 .Append("select 1 from ")
                 .WriteTableName()
